@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx  = 1;
 static const unsigned int snap      = 32;
@@ -16,10 +18,9 @@ static const char *colors[][3]      = {
 	/*                 fg         bg         border   */
 	[SchemeNorm]   = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]    = { col_gray4, col_cyan,  col_cyan  },
-	[SchemeTitle]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeTitle]  = { col_gray4, col_gray1, col_cyan  },
 };
 
-/* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
@@ -27,10 +28,10 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
-static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+static const float mfact        = 0.5; /* factor of master area size [0.05..0.95] */
+static const int nmaster        = 1;   /* number of clients in master area */
+static const int resizehints    = 1;   /* 1 means respect size hints in tiled resizals */
+static const int lockfullscreen = 1;   /* 1 will force focus on the fullscreen window */
 
 static const Layout layouts[] = {
 	{ "[]",      tile }
@@ -44,35 +45,46 @@ static const Layout layouts[] = {
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
-/* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
-
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
+static const char *backlightinccmd[] = { "xbacklight", "-inc", "10", NULL };
+static const char *backlightdeccmd[] = { "xbacklight", "-dec", "10", NULL };
+
+static const char *volumeinccmd[]  = { "amixer", "-q", "sset", "Master", "10%+", NULL };
+static const char *volumedeccmd[]  = { "amixer", "-q", "sset", "Master", "10%-", NULL };
+static const char *volumemutecmd[] = { "amixer", "-q", "sset", "Master", "toggle", NULL };
+
+static const char *microphonemutecmd[] = { "amixer", "-q", "sset", "Capture", "toggle", NULL };
 
 static const Key keys[] = {
-	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,	                XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_q,      killclient,     {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
+	/* modifier                     key        			function        argument */
+	{ 0,	 			XF86XK_MonBrightnessUp, 	spawn, 		{.v = backlightinccmd } }, 
+	{ 0, 				XF86XK_MonBrightnessDown, 	spawn, 		{.v = backlightdeccmd } }, 
+	{ 0, 				XF86XK_AudioLowerVolume, 	spawn, 		{.v = volumedeccmd } }, 
+	{ 0, 				XF86XK_AudioRaiseVolume, 	spawn, 		{.v = volumeinccmd } }, 
+	{ 0, 				XF86XK_AudioMute,	 	spawn, 		{.v = volumemutecmd } }, 
+	{ 0, 				XF86XK_AudioMicMute,	 	spawn, 		{.v = microphonemutecmd } }, 
+	{ MODKEY,                       XK_Return, 			spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_p,      			spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_b,      			togglebar,      {0} },
+	{ MODKEY,                       XK_j,      			focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,      			focusstack,     {.i = -1 } },
+	{ MODKEY,                       XK_h,      			setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_l,      			setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_q,      			killclient,     {0} },
+	{ MODKEY|ShiftMask,             XK_space,  			togglefloating, {0} },
+	{ MODKEY|ShiftMask,             XK_q,      			quit,           {0} },
+	TAGKEYS(                        XK_1,      			                0)
+	TAGKEYS(                        XK_2,      			                1)
+	TAGKEYS(                        XK_3,      			                2)
+	TAGKEYS(                        XK_4,      			                3)
+	TAGKEYS(                        XK_5,      			                4)
+	TAGKEYS(                        XK_6,      			                5)
+	TAGKEYS(                        XK_7,      			                6)
+	TAGKEYS(                        XK_8,      			                7)
+	TAGKEYS(                        XK_9,      			                8)
 };
 
 /* button definitions */
