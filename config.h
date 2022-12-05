@@ -31,12 +31,10 @@ static const int nmaster        = 1;   /* number of clients in master area */
 static const int resizehints    = 1;   /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1;   /* 1 will force focus on the fullscreen window */
 
-static const Layout layouts[] = {
-	{ "[]",      tile }
-};
+static const Layout layouts[] = { { "", tile } };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
