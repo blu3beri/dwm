@@ -49,8 +49,8 @@ static const char *slockcmd[]  = { "slock", NULL };
 static const char *backlightinccmd[] = { "xbacklight", "-inc", "10", NULL };
 static const char *backlightdeccmd[] = { "xbacklight", "-dec", "10", NULL };
 
-static const char *volumeinccmd[]  = { "amixer", "-q", "sset", "Master", "10%+", NULL };
-static const char *volumedeccmd[]  = { "amixer", "-q", "sset", "Master", "10%-", NULL };
+static const char *volumeinccmd[]  = { "amixer", "-q", "sset", "Master", "5%+", NULL };
+static const char *volumedeccmd[]  = { "amixer", "-q", "sset", "Master", "5%-", NULL };
 static const char *volumemutecmd[] = { "amixer", "-q", "sset", "Master", "toggle", NULL };
 
 static const char *microphonemutecmd[] = { "amixer", "-q", "sset", "Capture", "toggle", NULL };
